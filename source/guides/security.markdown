@@ -59,13 +59,24 @@ Currently paths cannot contain trailing slashes or an error will result. Also ta
 
 auth.conf
 ---------
+rest_authconfig = $confdir/auth.conf
 
-Documentation for auth.conf is pending.
+The auth.conf doesn't exist by default, but puppet has some default settings
+that will be put in place if you don't create an auth.conf.  You'll see these settings if you run your puppetmaster in debug mode and then connect with a client.
+
+There's also an example auth.conf file in the puppet source in conf/auth.conf
+
+http://github.com/reductivelabs/puppet/blob/master/conf/auth.conf
 
 namespaceauth.conf
 ------------------
+authconfig = $confdir/namespaceauth.conf
 
-Documentation for namespaceauth.conf is pending
+This file controls the restful API http connections to the puppet agent.  It is necessary to start the puppet agent with the listen true option.
+
+There's an example namespaceauth.conf file in the puppet source in conf/auth.conf
+
+http://github.com/reductivelabs/puppet/blob/master/conf/namespaceauth.conf
 
 Serverless operation
 --------------------
