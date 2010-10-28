@@ -71,7 +71,7 @@ puppet master and puppet agent shared REST API Reference
 GET `/certificate/{ca, other}
 
     curl -k -H "Accept: s" https://puppetmaster:8140/production/certificate/ca
-    curl -k -H "Accept: s" https://puppetcleint:8139/production/certificate/puppetclient
+    curl -k -H "Accept: s" https://puppetclient:8139/production/certificate/puppetclient
 
 puppet master REST API Reference
 ==================
@@ -86,7 +86,7 @@ GET `/{environment}/catalog/{node certificate name}`
 ### Certificate Revocation List
 GET `/certificate_revocation_list/ca`
 
-    curl -k -H "Accept: s" https://puppetmaster:8140/production/certificate/ca
+    curl -k -H "Accept: s" https://puppetmaster:8140/production/certificate_revocation_list/ca
 
 ### Certificate Request
 GET `/{environment}/certificate_requests/{anything}`
@@ -105,7 +105,7 @@ GET `/file{metadata, content, bucket}/{file}`
 File serving is covered in more depth on the [wiki]
 (http://projects.puppetlabs.com/projects/puppet/wiki/File_Serving_Configuration)
 
-### Node - Returns the Facts for the specified node
+### Node - Returns the Puppet::Node information including facts for the specified node
 GET `/{environment}/node/{node certificate name}`
 
     curl -k -H "Accept: yaml" https://puppetmaster:8140/production/node/puppetclient
@@ -113,7 +113,33 @@ GET `/{environment}/node/{node certificate name}`
 ### Status - Just used for testing
 GET `/{environment}/status/{anything}`
 
-    curl -k -H "Accept: pson" https://puppetmaster:8140/production/certificate_request/puppetclient
+    curl -k -H "Accept: pson" https://puppetmaster:8140/production/status/puppetclient
+
+### Facts
+GET `/{environment}/facts/{anything}`
+
+    curl -k -H "Accept: yaml" https://puppetmaster:8140/production/facts/{anything}
+
+PUT `/{environment}/facts/{node name}`
+
+    curl -k -X PUT -H 'Content-Type: text/yaml' --data-binary @/var/lib/pupet/yaml/facts/hostname.yaml https://localhost:8140/production/facts/{node name}
+
+### Inventory
+GET `/{environment}/inventory/{anything}`
+
+    curl -k -H "Accept: pson" https://puppetmaster:8140/production/inventory/search\?facts.processorcount.ge=2\&facts.operatingsystem=Ubuntu
+
+fact filters must be proceeded by "facts." and if you want to do a comparison besides equality, you must append ".comparisontype" to the fact name.  Available comparison types are:
+
+#### String comparison
+* eq - This is the default and will be used if no comparison is specified
+* ne - !=
+
+#### Numeric comparison
+* lt - <
+* le - <=
+* gt - >
+* ge - >=
 
 puppet agent REST API Reference
 ==================
@@ -130,6 +156,6 @@ GET `/{environment}/facts/{anything}`
     curl -k -H "Accept: yaml" https://puppetclient:8139/production/facts/{anything}
 
 ### Run - Cause the client to update like puppetrun or puppet kick
-PUT `/{environment}/run/{node certificate name}`
+PUT `/{environment}/run/{anything}`
 
     curl -k -X PUT -H "Content-Type: text/pson" -d "{}" https://puppetclient:8139/production/run/{anything}
